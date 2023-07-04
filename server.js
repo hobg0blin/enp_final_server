@@ -19,65 +19,40 @@ io.sockets.on("connection", newConnection);
 
 let state = {
   objects: [{ x: 0, y: 0, z: 0, color: "", creator: "", group: "", type: "", label: "" }],
-  groups: [
-    {
-      name: "one",
+  groups: {
+    red: {
+      name: "red",
       members: [],
-      currentPrompt: { prompt: "Left or right?", options: ["Left", "Right"], votes: [] },
-      previousVotes: [],
+      currentPrompt: { prompt: "Left or right?" },
+      previousPrompts: [],
+      nudge: "",
     },
-    {
-      name: "two",
+    green: {
+      name: "green",
       members: [],
-      currentPrompt: { prompt: "Left or right?", options: ["Left", "Right"], votes: [] },
-      previousVotes: [],
+      currentPrompt: { prompt: "Left or right?" },
+      previousPrompts: [],
+      nudge: "",
     },
-  ],
+    blue: {
+      name: "blue",
+      members: [],
+      currentPrompt: { prompt: "Left or right?" },
+      previousPrompts: [],
+      nudge: "",
+    },
+    yellow: {
+      name: "yellow",
+      members: [],
+      currentPrompt: { prompt: "Left or right?" },
+      previousPrompts: [],
+      nudge: "",
+    },
+  },
 };
-
 function newConnection(socket) {
-  // add members to different groups
   console.log("socket.id: ", socket.id);
-  for (let [idx, group] of state.groups.entries()) {
-    console.log("idx: ", idx);
-    console.log("group: ", group);
-    if (group.members.length <= state.groups[idx + 1 == state.groups.length ? 0 : idx + 1].members.length) {
-      group.members.push(socket.id);
-      break;
-    }
-  }
-  // not really doing anything with todd's code here but leaving it if it's useful
-  // updateGuestList();
-
-  io.emit("sendGuestList", state.groups);
-
-  socket.on("guestEnter", function (data) {
-    socket.join("guests");
-  });
-  // send state to client
-  io.emit("updateState", state);
-
-  // this stuff should be adapted to allow i/o from client/"performer"
-  socket.on("sendStatus", function (data) {
-    io.emit("statusMsg", socket.id + " " + data);
-  });
-
-  socket.on("clientAction", function (data) {
-    io.emit(data.type, data);
-  });
-
-  // host actions should be sent to group
-  // a potential refactor back to using host/client instead of a catchall updateState *could* be a good idea but
-  // for now updateState seems simpler
-  socket.on("hostAction", function (data) {
-    // this is actually a clever little thing but i'm not sure how it would work unless i were using rooms better
-    //if (data.target && data.type) {
-    //  io.to(data.target).emit(data.type, data);
-    //} else {
-    //  io.emit(data.type, data);
-    //}
-  });
-
+  socket.on("quizCompleted", sortingHat);
   socket.on("updateState", function (data) {
     // Object.assign(state, data)
     // if data includes new prompt/option, add that to group
@@ -92,30 +67,91 @@ function newConnection(socket) {
         state.objects.push(data.object);
         break;
       case "newPrompt":
-        for (group of state.groups) {
+        for (group of Object.values(state.groups)) {
+          if (group.name == data.target) {
+            group.previousPrompts.push(group.currentPrompt);
+            group.currentPrompt = { prompt: data.prompt };
+          }
+        }
+        break;
+      case "nudgeFromTheGods":
+        for (group of Object.values(state.groups)) {
+          console.log("group: ", group);
           if (data.target == "all") {
-            group.previousVotes.push(group.currentPrompt);
-            group.currentPrompt = { prompt: data.prompt, options: data.options, votes: [] };
+            group.nudge = { prompt: data.prompt };
           } else {
             if (group.name == data.target) {
-              group.previousVotes.push(group.currentPrompt);
-              group.currentPrompt = { prompt: data.prompt, options: data.options, votes: [] };
+              group.nudge = { prompt: data.prompt };
             }
           }
         }
         break;
-      case "vote":
-        console.log("vote: ", data);
-        state.groups[data.group.index].currentPrompt.votes.push(data.value);
-        break;
       default:
         console.log("Attempting update with incorrect update type");
     }
-
+    console.log("state updating");
     io.emit("updateState", state);
   });
 
   socket.on("disconnect", removeDisconnected);
+  function removeDisconnected() {
+    console.log("should be removing: ", socket.id);
+    for (group of Object.values(state.groups)) {
+      console.log("group: ", group);
+      if (group.members.includes(socket.id)) {
+        console.log("includes socket: ", socket.id);
+        const idx = group.members.indexOf(socket.id);
+        state.groups[group.name].members.splice(idx, 1);
+      }
+    }
+    io.emit("updateState", state);
+  }
+}
+function sortingHat(choices) {
+  // add members to different groups
+  // not really doing anything with todd's code here but leaving it if it's useful
+  // updateGuestList();
+  // console.log("choices: ", choices);
+  // TODO: ACTUAL SORTING LOGIC INSTEAD OF THIS
+  if (choices.choice1 == "1") {
+    state.groups.red.members.push(choices.id);
+  } else if (choices.choice2 == "2") {
+    state.groups.blue.members.push(choices.id);
+  } else if (choices.choice3 == "3") {
+    state.groups.yellow.members.push(choices.id);
+  } else {
+    state.groups.green.members.push(choices.id);
+  }
+
+  io.emit("sendGuestList", state.groups);
+
+  //socket.on("guestEnter", function (data) {
+  //  socket.join("guests");
+  //});
+  // send state to client
+  io.emit("updateState", state);
+
+  // this stuff should be adapted to allow i/o from client/"performer"
+  //  socket.on("sendStatus", function (data) {
+  //    io.emit("statusMsg", choices.id + " " + data);
+  //  });
+  //
+  //  socket.on("clientAction", function (data) {
+  //    io.emit(data.type, data);
+  //  });
+  //
+  //  // host actions should be sent to group
+  //  // a potential refactor back to using host/client instead of a catchall updateState *could* be a good idea but
+  //  // for now updateState seems simpler
+  //  socket.on("hostAction", function (data) {
+  //    // this is actually a clever little thing but i'm not sure how it would work unless i were using rooms better
+  //    //if (data.target && data.type) {
+  //    //  io.to(data.target).emit(data.type, data);
+  //    //} else {
+  //    //  io.emit(data.type, data);
+  //    //}
+  //  });
+  //
 }
 function updateGuestList(socket) {
   // still not sure if i'm gonna do anything with guestlist, but leaving it here just in case
@@ -130,15 +166,6 @@ function updateGuestList(socket) {
 // ideally, getting position from AR stuff or marker, can reassign to group automatically on reconnect
 // although I guess it's kinda funny to just make people run to a new group if they disconnect
 
-function removeDisconnected(socket) {
-  console.log("should be removing: ", socket.id);
-  for (group of state.groups) {
-    if (group.members.includes(socket.id)) {
-      const idx = group.members.indexOf(socket.id);
-      group.members.splice(idx, 1);
-    }
-  }
-}
 async function getSocketsInRoom(room) {
   let returnArray = [];
   const sockets = await io.in(room).fetchSockets();

@@ -12,7 +12,6 @@ socket.on("sendGuestList", function (data) {
     $("#memberCount").text($("option:selected").attr("count"));
     $("#currentPrompt").text($("option:selected").attr("currentPrompt"));
     $("#currentResults").text($("option:selected").attr("currentResults"));
-    $("#pastVotes").text($("option:selected").attr("pastVotes"));
   });
 });
 
@@ -26,24 +25,27 @@ socket.on("sendGuestList", function (data) {
 //  })
 //})
 socket.on("updateState", function (state) {
-  for (group of state.groups) {
+  for (group of Object.values(state.groups)) {
     let opt = $(`option:contains(${group.name})`);
     opt.attr("members", group.members);
     opt.attr("count", group.members.length);
     opt.attr("currentPrompt", group.currentPrompt.prompt);
-    opt.attr("currentResults", JSON.stringify(group.currentPrompt.votes));
-    opt.attr("pastVotes", JSON.stringify(group.pastVotes));
+    $("#currentPrompt").text(group.currentPrompt.prompt);
+    for (prompt of group.previousPrompts) {
+      $("#pastVotes").append(`<div>${prompt.prompt}</div>`);
+    }
   }
+
   $("#state").text(JSON.stringify(state));
 });
 
 $("#sendToAll").click(function () {
-  sendSocket("updateState", true, { updateType: "newPrompt", prompt: $("#newPrompt").val(), options: $("#newOptions").val().split(",") });
+  sendSocket("updateState", true, { updateType: "nudgeFromTheGods", prompt: $("#newPrompt").val() });
   $("#guests").val("");
 });
 
 $("#sendToSelected").click(function () {
-  sendSocket("updateState", false, { updateType: "newPrompt", prompt: $("#newPrompt").val(), options: $("#newOptions").val().split(",") });
+  sendSocket("updateState", false, { updateType: "nudgeFromTheGods", prompt: $("#newPrompt").val() });
 });
 
 // button clicks:

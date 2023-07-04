@@ -10,13 +10,12 @@
   }
   .choice-text,
   #previousVote,
-  #messages {
+  #main {
     color: white;
   }
   #submit_quiz {
     display: block;
   }
-
   #hiddenBox {
     background-color: black;
     width: 40px;
@@ -48,8 +47,8 @@
   <div class="choice-text">When working, I prefer to:</div>
   <select id="choice1">
     <option value="1">Get done as quickly as possible</option>
-    <option value="2">Take my time to do as good a job as possible</option>
-    <option value="3">Find someone else to do it for me</option>
+    <option value="2">Take your time to do as good a job as possible</option>
+    <option value="3">Find someone else to do it for you</option>
   </select>
   <div class="choice-text">When making a choice with others, I:</div>
   <select id="choice2">
@@ -57,24 +56,36 @@
     <option value="2">Work to make consensus together.</option>
     <option value="3">Make sure my preferred choice is selected, no matter what.</option>
   </select>
-  <div class="choice-text">When the spirit emperors return, I:</div>
+  <div class="choice-text">As a spirit emperor, I:</div>
   <select id="choice3">
-    <option value="1">Hope I get a good position.</option>
-    <option value="2">Expect to be recognized for my hard work.</option>
-    <option value="3">Intend to overthrow them.</option>
+    <option value="1">Tend to be lax with my human vessels.</option>
+    <option value="2">Reward those who show their dedication to me.</option>
+    <option value="3">Regard my vessels with a suspicious eye.</option>
   </select>
+
   <button id="submit_quiz">Submit</button>
 </div>
-<div id="three" class="hidden">
-  <input id="three-object-label" />
-  <button id="submit-three">Submit</button>
+<div id="main">
+  <div class="choice-text">SEND A MESSAGE FROM BEYOND</div>
+  <input id="new_prompt"/ >
+  <button id="submit_prompt">Submit</button>
+  <div id="lastMessage">
+    <div>
+      Past messages:
+      <div id="prevPrompt"></div>
+    </div>
+    <div>
+      Current message:
+      <span id="currentMessage"></span>
+    </div>
+  </div>
+  <div class="choice-text">
+    NUDGES FROM THE GODS
+    <div id="nudge"></div>
+  </div>
 </div>
-<div id="messages" class="hidden">
-  MESSAGES FROM THE SPIRIT EMPERORS
-  <div>Last message: <span id="prevPrompt"></span></div>
-  <div>Current message: <span id="currentPrompt"></span></div>
-</div>
+
 <!-- Put your html above these scripts -->
 <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.min.js"></script>
-<script src="client.js"></script>
+<script src="ghost.js"></script>
