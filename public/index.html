@@ -1,0 +1,63 @@
+<style>
+  body {
+    background-color: black;
+  }
+  #closet {
+    display: block;
+    margin: auto;
+    margin-top: 10%;
+    height: 50%;
+  }
+  #choice-text,
+  #previousVote {
+    color: white;
+  }
+
+  #hiddenBox {
+    background-color: black;
+    width: 40px;
+    height: 40px;
+  }
+
+  #skull {
+    width: 200px;
+    margin-left: 0px;
+  }
+  #portal {
+    width: 300px;
+    position: fixed;
+    top: 0;
+    left: 30%;
+  }
+  input {
+    //position: fixed;
+    //bottom 10px;
+    //right:10px;
+  }
+
+  .hidden {
+    display: none;
+  }
+</style>
+
+<div id="main">
+  <div id="choice-text"></div>
+  <select id="choices"></select>
+</div>
+<div id="three" class="hidden">
+  <input id="three-object-label" />
+  <button id="submit-three">Submit</button>
+</div>
+<div id="previousVote" class="hidden">
+  <div>Last vote: <span id="prevPrompt"></span></div>
+  <div>
+    Last result
+    <div id="prevResult"></div>
+  </div>
+</div>
+<input class="hidden" placeholder="submit your solution" />
+
+<!-- Put your html above these scripts -->
+<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.min.js"></script>
+<script src="client.js"></script>
