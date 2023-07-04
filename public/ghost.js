@@ -12,7 +12,7 @@ $("#submit_quiz").on("click", () => {
   const choices = { choice1: $("#choice1").val(), choice2: $("#choice2").val(), choice3: $("#choice3").val(), inPerson: false, id: sessionID };
   console.log("choices: ", choices);
   $("#quiz").hide();
-  $("#messages").show();
+  $("#main").show();
   socket.emit("quizCompleted", choices);
 });
 
