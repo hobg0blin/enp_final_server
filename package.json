@@ -14,15 +14,11 @@
     "socket.io": "^4.2.0"
   },
   "engines": {
-    "node": "8.x"
+    "node": "16.x"
   },
   "repository": {
     "url": "https://glitch.com/edit/#!/welcome-project"
   },
   "license": "MIT",
-  "keywords": [
-    "node",
-    "glitch",
-    "express"
-  ]
+  "keywords": ["node", "glitch", "express"]
 }
