@@ -79,10 +79,3 @@ $(document).click(function () {
     ac = new AudioContext();
   }
 });
-
-$("select").change(function () {
-  let msg = $(this).val();
-  socket.emit("updateState", { updateType: "vote", voter: sessionID, value: msg, group: myGroup });
-  $("select").empty();
-  $("#main").addClass("hidden");
-});
