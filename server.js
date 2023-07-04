@@ -16,6 +16,12 @@ io.sockets.on("connection", newConnection);
 // secret can advance to next stage once submissions are in
 // real-time client location ???
 // how to progress through stages????
+// BIGGER FIXMES: 
+// remove group member on disconnect doesn't seem to be working
+// default "vote over" but no new prompt yet stage
+// exclude mod from group members
+// map out stages for mod
+
 
 let state = {
   objects: [{ x: 0, y: 0, z: 0, color: "", creator: "", group: "", type: "", label: "" }],
